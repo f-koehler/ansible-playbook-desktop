@@ -1,0 +1,7 @@
+roles:
+  - name: f_koehler.docker
+  - name: f_koehler.haveged
+  - name: f_koehler.zfs
+
+collections:
+  - name: community.general

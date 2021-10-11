@@ -1,0 +1,9 @@
+- hosts: desktops
+  become: true
+  roles:
+    - role: f_koehler.docker
+      vars:
+        docker_users:
+          - fkoehler
+    - role: f_koehler.haveged
+    - role: f_koehler.zfs
