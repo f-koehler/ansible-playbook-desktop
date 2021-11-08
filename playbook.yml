@@ -1,9 +1,16 @@
 - hosts: desktops
   become: true
-  roles:
-    - role: f_koehler.docker
-      vars:
-        docker_users:
-          - fkoehler
-    - role: f_koehler.haveged
-    - role: f_koehler.zfs
+  handlers:
+    - name: Import handlers.
+      ansible.builtin.import_tasks: tasks/handlers.yml
+  tasks:
+    - name: Setup Docker.
+      ansible.builtin.import_tasks: tasks/docker.yml
+    - name: Setup LaTeX.
+      ansible.builtin.import_tasks: tasks/latex.yml
+    - name: Setup ssh server.
+      ansible.builtin.import_role:
+        name: f_koehler.sshd
+    - name: Setup haveged.
+      ansible.builtin.import_role:
+        name: f_koehler.haveged

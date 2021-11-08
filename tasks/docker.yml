@@ -1,0 +1,11 @@
+- name: Install docker.
+  ansible.builtin.import_role:
+    name: geerlingguy.docker
+  vars:
+    docker_package: docker
+    docker_install_compose: false
+
+- name: Install docker-compose.
+  ansible.builtin.package:
+    name: docker-compose
+    state: present

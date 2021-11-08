@@ -1,0 +1,4 @@
+- name: Restart languagetool.
+  ansible.builtin.service:
+    name: languagetool
+    state: restarted

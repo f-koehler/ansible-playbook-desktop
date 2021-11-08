@@ -1,0 +1,32 @@
+- name: Install LaTeX.
+  ansible.builtin.package:
+    name:
+      - texlive-most
+      - texlive-bibtexextra
+      - biber
+      - ghostscript
+
+- name: Install latexindent dependencies.
+  ansible.builtin.package:
+    name:
+      - perl-eval-closure
+      - perl-file-homedir
+      - perl-log-log4perl
+      - perl-namespace-autoclean
+      - perl-params-validationcompiler
+      - perl-specio
+      - perl-unicode-linebreak
+      - perl-yaml-tiny
+
+- name: Install languagetool.
+  ansible.builtin.package:
+    name:
+      - languagetool
+      - jre-openjdk-headless
+  notify: Restart languagetool.
+
+- name: Enable languagetool.
+  ansible.builtin.service:
+    name: languagetool
+    state: started
+    enabled: true
