@@ -1,8 +1,10 @@
 - hosts: desktops
   become: true
+  vars_files:
+    - "config.yml"
   handlers:
     - name: Import handlers.
-      ansible.builtin.import_tasks: tasks/handlers.yml
+      ansible.builtin.import_tasks: handlers.yml
   tasks:
     - name: Setup Docker.
       ansible.builtin.import_tasks: tasks/docker.yml
@@ -14,3 +16,5 @@
     - name: Setup haveged.
       ansible.builtin.import_role:
         name: f_koehler.haveged
+    - name: Setup kvm.
+      ansible.builtin.import_tasks: tasks/kvm.yml

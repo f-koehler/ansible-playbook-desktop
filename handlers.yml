@@ -1,0 +1,30 @@
+- name: Restart languagetool.
+  ansible.builtin.service:
+    name: languagetool
+    state: restarted
+
+- name: Reload KVM modules.
+  block:
+    - name: Unload KVM modules.
+      community.general.modprobe:
+        name: "{{ module }}"
+        state: absent
+      loop:
+        - "kvm"
+        - "kvm_{{ module }}"
+      loop_control:
+        loop_var: module
+    - name: Load KVM modules.
+      community.general.modprobe:
+        name: "{{ module }}"
+        state: present
+      loop:
+        - "kvm"
+        - "kvm_{{ module }}"
+      loop_control:
+        loop_var: module
+
+- name: Restart libvirt service.
+  ansible.builtin.systemd:
+    name: libvirtd.service
+    state: restarted

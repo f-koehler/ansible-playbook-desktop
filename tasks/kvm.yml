@@ -1,0 +1,78 @@
+- name: Configure KVM module loading.
+  ansible.builtin.template:
+    src: templates/kvm/modules.conf.j2
+    dest: /etc/modules-load.d/kvm.conf
+    mode: "0755"
+    owner: root
+    group: root
+
+- name: Configure KVM modprobe.
+  ansible.builtin.template:
+    src: templates/kvm/modprobe.conf.j2
+    dest: /etc/modprobe.d/kvm.conf
+    mode: "0755"
+    owner: root
+    group: root
+  notify: Reload KVM modules.
+
+- name: Load KVM modules.
+  community.general.modprobe:
+    name: "{{ module }}"
+    state: present
+  loop:
+    - "kvm"
+    - "kvm_{{ kvm_platform }}"
+  loop_control:
+    loop_var: module
+
+- name: Install qemu.
+  ansible.builtin.package:
+    name:
+      - qemu
+      - qemu-arch-extra
+      - qemu-block-gluster
+      - qemu-block-iscsi
+      - qemu-block-rbd
+      - samba
+      - edk2-armvirt
+      - edk2-ovmf
+
+- name: Configure KVM users.
+  ansible.builtin.user:
+    name: "{{ user }}"
+    groups:
+      - kvm
+    append: true
+  loop: "{{ kvm_users }}"
+  loop_control:
+    loop_var: user
+
+- name: Install libvirt.
+  ansible.builtin.package:
+    name:
+      - libvirt
+      - dmidecode
+      - dnsmasq
+      - iptables-nft
+      - gettext
+      - lvm2
+      - openbsd-netcat
+      - radvd
+      - bridge-utils
+  notify: Restart libvirt service.
+
+- name: Enable libvirt service.
+  ansible.builtin.systemd:
+    name: libvirtd.service
+    state: started
+    enabled: true
+
+- name: Configure libvirt users.
+  ansible.builtin.user:
+    name: "{{ user }}"
+    groups:
+      - kvm
+    append: true
+  loop: "{{ libvirt_users }}"
+  loop_control:
+    loop_var: user
